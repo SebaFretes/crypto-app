@@ -1,12 +1,40 @@
+import { useState } from 'react'
 import { currencies } from '../data'
+import { useCryptoStore } from '../store'
+import type { Pair } from '../types'
+import ErrorMessage from './ErrorMessage'
 
 const CryptoSearchForm = () => {
+    const cryptoCurrencies = useCryptoStore((state) => state.cryptoCurrencies);
+    const fetchData = useCryptoStore((state) => state.fetchData)
+    const [pair, setPair] = useState<Pair>({
+        currency: '',
+        cryptocurrency: ''
+    });
+    const [error, setError] = useState('')
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setPair({
+            ...pair,
+            [e.target.name]: e.target.value
+        })
+    }
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if(Object.values(pair).includes('')) {
+            setError('All fields are required');
+            return;
+        }
+        setError('');
+        fetchData(pair);
+    }
+
   return (
     <div>
-      <form className='form'>
+      <form className='form' onSubmit={handleSubmit}>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <div className='field'>
             <label htmlFor='currency'>Currency:</label>
-            <select name='currency' id='currency'>
+            <select name='currency' id='currency' onChange={handleChange} value={pair.currency}>
                 <option value="">-- Select --</option>
                 {currencies.map( currency => (
                     <option key={currency.code} value={currency.code}>{currency.name}</option>
@@ -16,8 +44,11 @@ const CryptoSearchForm = () => {
 
         <div className='field'>
             <label htmlFor='cryptocurrency'>Cryptocurrency:</label>
-            <select name='cryptocurrency' id='ryptocurrency'>
+            <select name='cryptocurrency' id='cryptocurrency' onChange={handleChange} value={pair.cryptocurrency}>
                 <option value="">-- Select --</option>
+                {cryptoCurrencies.map( crypto => (
+                    <option key={crypto.NAME} value={crypto.SYMBOL}>{crypto.NAME}</option>
+                ))}
             </select>
         </div>
 
