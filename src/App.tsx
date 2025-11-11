@@ -21,6 +21,11 @@ function App() {
           <CryptoPriceDisplay />
         </div>
       </div>
+      <footer>
+        <p>
+          Developed by <a href="https://github.com/SebaFretes/" target="_blank"><span>Sebastian Fretes</span></a>
+        </p>
+      </footer>
     </>
   )
 }
